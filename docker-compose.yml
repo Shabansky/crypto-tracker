@@ -10,10 +10,11 @@ services:
       - ./docker-compose/snippets:/etc/nginx/snippets:ro
       - ./:/var/www/html
     depends_on:
-      - php
+      - api
 
-  php:
-    image: php:8.4-fpm
+  api:
+    build:
+      context: ./docker-compose/contexts/api
     volumes:
       - ./:/var/www/html
       - ./docker-compose/php.ini:/usr/local/etc/php/php.ini
