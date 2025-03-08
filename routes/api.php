@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SubscriptionController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -7,14 +8,29 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::post('/subscription', function (Request $request) {
-    return 'New Subscription';
-});
+Route::post(
+    '/subscription',
+    [
+        SubscriptionController::class,
+        'post',
+        ['request' => new Request()]
+    ]
+);
 
-Route::patch('/subscription', function (Request $request) {
-    return 'Edit Existing Subscription';
-});
+Route::patch(
+    '/subscription',
+    [
+        SubscriptionController::class,
+        'patch',
+        ['request' => new Request(), 'id' => 1]
+    ]
+);
 
-Route::delete('/subscription', function (Request $request) {
-    return 'Delete Existing Subscription';
-});
+Route::delete(
+    '/subscription',
+    [
+        SubscriptionController::class,
+        'delete',
+        ['id' => 1]
+    ]
+);

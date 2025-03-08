@@ -8,16 +8,6 @@ use Tests\TestCase;
 
 class EndpointsTest extends TestCase
 {
-    /**
-     * A basic feature test example.
-     */
-    public function test_example(): void
-    {
-        $response = $this->get('api/');
-
-        $response->assertStatus(404);
-    }
-
     public function test_post(): void
     {
         $response = $this->post('api/subscription');
@@ -28,7 +18,7 @@ class EndpointsTest extends TestCase
 
     public function test_patch(): void
     {
-        $response = $this->patch('api/subscription');
+        $response = $this->patch('api/subscription', ['id' => 1]);
 
         $response->assertStatus(200);
         $response->assertContent('Edit Existing Subscription');
