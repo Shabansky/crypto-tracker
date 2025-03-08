@@ -8,29 +8,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::post(
-    '/subscription',
-    [
-        SubscriptionController::class,
-        'post',
-        ['request' => new Request()]
-    ]
-);
-
-Route::patch(
-    '/subscription',
-    [
-        SubscriptionController::class,
-        'patch',
-        ['request' => new Request(), 'id' => 1]
-    ]
-);
-
-Route::delete(
-    '/subscription',
-    [
-        SubscriptionController::class,
-        'delete',
-        ['id' => 1]
-    ]
-);
+Route::controller(SubscriptionController::class)->group(function () {
+    Route::post('/subscription', 'post');
+    Route::patch('/subscription', 'patch');
+    Route::delete('/subscription', 'delete');
+});
