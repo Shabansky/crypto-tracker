@@ -14,7 +14,8 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     git \
-    curl
+    curl \
+    cron
 
 # Install PHP extensions
 RUN docker-php-ext-install pdo pdo_mysql mbstring exif pcntl bcmath gd dom
@@ -28,6 +29,17 @@ WORKDIR $APP_DIR
 # Apply ownership rules
 RUN mkdir -p $APP_DIR/storage && chmod -R guo+w ${APP_DIR}/storage
 
-# Expose port 9000 and start php-fpm server
+# Copy crontab file and set permissions
+COPY crontab /etc/cron.d/api-cron
+RUN chmod 0744 /etc/cron.d/api-cron
+
+# Create the log file to be able to run tail
+RUN touch /var/log/cron.log
+
+# Copy the start script
+COPY scripts.sh /usr/local/bin/scripts.sh
+RUN chmod +x /usr/local/bin/scripts.sh
+
+# Expose port 9000 and start services
 EXPOSE 9000
-CMD ["php-fpm"]
+CMD ["sh", "/usr/local/bin/scripts.sh"]
