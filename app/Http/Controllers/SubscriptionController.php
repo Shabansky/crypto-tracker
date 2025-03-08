@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\TimeframeHoursEnum;
+use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\ValidationException;
 
 class SubscriptionController extends Controller
 {
@@ -12,6 +15,23 @@ class SubscriptionController extends Controller
      */
     public function post(Request $request)
     {
+        $content = $request->getContent();
+        try {
+            if (!json_validate($content)) {
+                throw new InvalidArgumentException("Request body is not a JSON");
+            }
+
+            $request->validate([
+                'email' => 'required|email',
+                'threshold' => 'required|numeric|gte:0|decimal:0,2',
+                'timeframe' => 'required|numeric|in:' . implode(',', TimeframeHoursEnum::values()),
+            ], [
+                'timeframe.in' => 'The selected timeframe is invalid. Please choose one of the following: ' .  implode(', ', TimeframeHoursEnum::values())
+            ]);
+        } catch (InvalidArgumentException | ValidationException $e) {
+            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
+        }
+
         return new Response('New Subscription', 200);
     }
 
@@ -20,6 +40,23 @@ class SubscriptionController extends Controller
      */
     public function patch(Request $request)
     {
+        $content = $request->getContent();
+        try {
+            if (!json_validate($content)) {
+                throw new InvalidArgumentException("Request body is not a JSON");
+            }
+
+            $request->validate([
+                'email' => 'required|email',
+                'threshold' => 'numeric|gte:0|decimal:0,2',
+                'timeframe' => 'numeric|in:' . implode(',', TimeframeHoursEnum::values()),
+            ], [
+                'timeframe.in' => 'The selected timeframe is invalid. Please choose one of the following: ' .  implode(', ', TimeframeHoursEnum::values())
+            ]);
+        } catch (InvalidArgumentException | ValidationException $e) {
+            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
+        }
+
         return new Response('Edit Existing Subscription', 200);
     }
 
@@ -28,6 +65,19 @@ class SubscriptionController extends Controller
      */
     public function delete(Request $request)
     {
+        $content = $request->getContent();
+        try {
+            if (!json_validate($content)) {
+                throw new InvalidArgumentException("Request body is not a JSON");
+            }
+
+            $request->validate([
+                'email' => 'required|email',
+            ]);
+        } catch (InvalidArgumentException | ValidationException $e) {
+            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
+        }
+
         return new Response('Delete Existing Subscription', 200);
     }
 }
