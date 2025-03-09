@@ -18,7 +18,7 @@ class EndpointsTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertContent('New Subscription');
+        $response->assertContent('Subscription added successfully');
     }
 
     /**

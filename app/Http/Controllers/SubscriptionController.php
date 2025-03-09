@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subscription;
 use App\TimeframeHoursEnum;
+use GuzzleHttp\Exception\BadResponseException;
+use Illuminate\Http\Client\RequestException as ClientRequestException;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -16,6 +19,7 @@ class SubscriptionController extends Controller
     public function post(Request $request)
     {
         $content = $request->getContent();
+
         try {
             if (!json_validate($content)) {
                 throw new InvalidArgumentException("Request body is not a JSON");
@@ -32,7 +36,29 @@ class SubscriptionController extends Controller
             return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
         }
 
-        return new Response('New Subscription', 200);
+        $content = json_decode($content);
+
+        try {
+            //TODO: Move to repository
+            $duplicateEntry = Subscription
+                ::where('email', $content->email)
+                ->where('timeframe', $content->timeframe)
+                ->count();
+
+            if ($duplicateEntry > 0) {
+                throw new InvalidArgumentException('Subscription already exists. Consider updating it instead.');
+            }
+
+            Subscription::create([
+                'email' => $content->email,
+                'threshold' => $content->threshold,
+                'timeframe' => $content->timeframe,
+            ]);
+        } catch (InvalidArgumentException $e) {
+            return new Response($e->getMessage(), 400);
+        }
+
+        return new Response('Subscription added successfully', 200);
     }
 
     /**
