@@ -2,6 +2,8 @@
 
 namespace App\Services\TickerProviders;
 
+use Illuminate\Support\Facades\Http;
+
 class BitfinexTickerProvider implements TickerProviderInterface
 {
     /**
@@ -30,18 +32,17 @@ class BitfinexTickerProvider implements TickerProviderInterface
 
     protected function getTickerData(): string
     {
-        return '[
-                    86283,
-                    3.24699078,
-                    86285,
-                    5.38491747,
-                    -259,
-                    -0.00299252,
-                    86290,
-                    844.85316369,
-                    86890,
-                    85936
-                ]';
+        $response = Http::withHeaders([
+            'accept' => 'application/json'
+        ])->get('https://api-pub.bitfinex.com/v2/ticker/tBTCUSD');
+
+        if ($response->failed()) {
+            throw new TickerProviderApiException(
+                sprintf("Error from server: %s", $response->body())
+            );
+        }
+
+        return $response->body();
     }
 
     /**
