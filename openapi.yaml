@@ -1,0 +1,129 @@
+openapi: 3.0.0
+info:
+  title: 'Subscription API'
+  description: 'Allows for listing and control of different email subscriptions'
+  version: 1.0.0
+paths:
+  /subscription:
+    get:
+      summary: 'List all subscription settings for a given email'
+      description: 'List all subscription settings for a given email'
+      operationId: 4e9987c0db38b0c8150a611a656bac70
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+              properties:
+                email:
+                  description: 'The email to search subscriptions by'
+                  type: string
+              type: object
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+    post:
+      summary: 'Create a new subscription'
+      description: 'Add a new subscription'
+      operationId: 1f48b326de0b0215ff8b3b3cec795d24
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - timeframe
+                - threshold
+              properties:
+                email:
+                  description: 'The email to search subscriptions by'
+                  type: string
+                timeframe:
+                  description: 'The timeframe in hours at which to check for price deviations'
+                  type: integer
+                  enum: [1, 6, 24]
+                threshold:
+                  description: 'A percentage of the price difference to look for within the given time frame'
+                  type: number
+                  format: float
+                  minimum: 0
+              type: object
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+        '409':
+          description: 'Subscriber to be created exists'
+        '500':
+          description: 'Service unable to process request'
+    delete:
+      summary: 'Remove specified subscription. Delete all related subscription settings.'
+      description: 'Deletes either a subscription or a subscription setting if a timeframe is defined'
+      operationId: f7ae165c98632167d7058eec8b59c789
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+              properties:
+                email:
+                  description: 'The email to search subscriptions by'
+                  type: string
+                timeframe:
+                  description: 'The timeframe in hours at which to check for price deviations. If defined, delete a subscription setting.'
+                  type: integer
+                  enum: [1, 6, 24]
+              type: object
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+        '409':
+          description: 'Subscriber to be deleted does not exist'
+        '500':
+          description: 'Service unable to process request'
+    patch:
+      summary: 'Update current subscription. Overwrite currently existing subscription settings.'
+      description: 'Update a subscriber setting'
+      operationId: 96599fa8cc9872c7fd932508c8ae5cc3
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              required:
+                - email
+                - timeframe
+                - threshold
+              properties:
+                email:
+                  description: 'The email to search subscriptions by'
+                  type: string
+                timeframe:
+                  description: 'The timeframe in hours at which to check for price deviations'
+                  type: integer
+                  enum: [1, 6, 24]
+                threshold:
+                  description: 'A percentage of the price difference to look for within the given time frame'
+                  type: number
+                  format: float
+                  minimum: 0
+              type: object
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+        '409':
+          description: 'Subscriber to be updated does not exist'
+        '500':
+          description: 'Service unable to process request'
