@@ -5,6 +5,7 @@ namespace App\Domain\Subscription\Application;
 use App\Infrastructure\Http\Controller;
 use App\Domain\Subscription\Domain\Subscription;
 use App\Domain\Shared\Domain\TimeframeHoursEnum;
+use App\Domain\Subscription\Application\Handlers\addSubscriptionHandler;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -47,48 +48,7 @@ class SubscriptionController extends Controller
      */
     public function post(Request $request)
     {
-        $content = $request->getContent();
-
-        try {
-            if (!json_validate($content)) {
-                throw new InvalidArgumentException("Request body is not a JSON");
-            }
-
-            $request->validate([
-                'email' => 'required|email',
-                'threshold' => 'required|numeric|gte:0|decimal:0,2',
-                'timeframe' => 'required|numeric|in:' . implode(',', TimeframeHoursEnum::values()),
-            ], [
-                'timeframe.in' => 'The selected timeframe is invalid. Please choose one of the following: ' .  implode(', ', TimeframeHoursEnum::values())
-            ]);
-
-            $content = json_decode($content);
-
-            //TODO: Move to repository
-            $existingEntry = Subscription
-                ::where('email', $content->email)
-                ->where('timeframe', $content->timeframe)
-                ->count();
-
-            if ($existingEntry) {
-                throw new InvalidArgumentException('Subscription already exists. Consider updating it instead.');
-            }
-        } catch (InvalidArgumentException | ValidationException $e) {
-            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
-        }
-
-        try {
-            Subscription::create([
-                'email' => $content->email,
-                'threshold' => $content->threshold,
-                'timeframe' => $content->timeframe,
-            ]);
-        } catch (\Exception $e) {
-            //TODO: Log as well
-            return new Response('Error creating subscription', 500);
-        }
-
-        return new Response('Subscription added successfully', 200);
+        return new addSubscriptionHandler()->run($request);
     }
 
     /**
