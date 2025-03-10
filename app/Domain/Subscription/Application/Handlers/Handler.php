@@ -35,9 +35,8 @@ abstract class Handler
 
         try {
             return $this->process();
-            //TODO: Change InvalidArgumentException to Conflict one
         } catch (InvalidArgumentException $e) {
-            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
+            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 409);
         } catch (QueryException | PDOException $e) {
             //TODO: Log this
             var_dump($e->getMessage());
