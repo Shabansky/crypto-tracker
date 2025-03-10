@@ -47,6 +47,7 @@ abstract class Handler
      */
     protected abstract function validate();
 
+    //TODO: Consider process returning void and introduce specific method for response return.
     /**
      * @throws QueryException
      * @throws PDOException

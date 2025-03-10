@@ -7,8 +7,10 @@ use App\Domain\Subscription\Domain\Subscription;
 use Illuminate\Http\Response;
 use InvalidArgumentException;
 
-class addSubscriptionHandler extends Handler
+class editSubscriptionHandler extends Handler
 {
+    protected $existingEntry;
+
     protected function validate()
     {
         $this->request->validate([
@@ -23,20 +25,17 @@ class addSubscriptionHandler extends Handler
     protected function process(): Response
     {
         $existingEntry = Subscription
-            ::where('email', $this->request->email)
-            ->where('timeframe', $this->request->timeframe)
-            ->count();
+            ::where('email', $this->requestContent->email)
+            ->where('timeframe', $this->requestContent->timeframe)
+            ->first();
 
-        if ($existingEntry) {
-            throw new InvalidArgumentException('Subscription already exists. Consider updating it instead.');
+        if ($existingEntry === null) {
+            throw new InvalidArgumentException('Subscription does not exist. Consider adding it instead.');
         }
 
-        Subscription::create([
-            'email' => $this->requestContent->email,
-            'threshold' => $this->requestContent->threshold,
-            'timeframe' => $this->requestContent->timeframe,
-        ]);
+        $existingEntry->threshold = $this->requestContent->threshold;
+        $existingEntry->save();
 
-        return new Response('Subscription added successfully', 200);
+        return new Response('Subscription updated successfully', 200);
     }
 }
