@@ -1,11 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Domain\Subscription\Application;
 
+use App\Infrastructure\Http\Controller;
 use App\Models\Subscription;
 use App\TimeframeHoursEnum;
-use GuzzleHttp\Exception\BadResponseException;
-use Illuminate\Http\Client\RequestException as ClientRequestException;
 use InvalidArgumentException;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
