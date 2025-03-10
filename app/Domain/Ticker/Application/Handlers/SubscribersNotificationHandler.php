@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Services\TickerManager;
+namespace App\Domain\Ticker\Application\Handlers;
 
-use App\Models\HourlyTicker;
-use App\Models\HourlyTickerRepository;
-use App\Services\TickerManager\PriceDifferenceGenerator;
+use App\Domain\Ticker\Domain\Models\HourlyTicker;
+use App\Domain\Ticker\Domain\Repositories\HourlyTickerRepository;
+use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
+use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
 use App\Services\TickerProviders\BitfinexTickerProvider;
 use App\Services\TickerProviders\TickerProviderApiException;
 use Illuminate\Http\Client\ConnectionException;

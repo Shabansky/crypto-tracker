@@ -3,7 +3,7 @@
 namespace App\Domain\Subscription\Application;
 
 use App\Infrastructure\Http\Controller;
-use App\Models\Subscription;
+use App\Domain\Subscription\Domain\Subscription;
 use App\TimeframeHoursEnum;
 use InvalidArgumentException;
 use Illuminate\Http\Request;

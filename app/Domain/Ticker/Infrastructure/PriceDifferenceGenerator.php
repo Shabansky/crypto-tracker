@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TickerManager;
+namespace App\Domain\Ticker\Infrastructure;
 
 use App\TimeframeHoursEnum;
 use Illuminate\Database\Eloquent\Collection;

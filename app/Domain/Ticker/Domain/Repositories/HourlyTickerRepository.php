@@ -1,6 +1,8 @@
 <?php
 
-namespace App\Models;
+namespace App\Domain\Ticker\Domain\Repositories;
+
+use App\Domain\Ticker\Domain\Models\HourlyTicker;
 
 class HourlyTickerRepository
 {
