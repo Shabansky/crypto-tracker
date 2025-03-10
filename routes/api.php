@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::controller(SubscriptionController::class)->group(function () {
+    Route::get('/subscription', 'get');
     Route::post('/subscription', 'post');
     Route::patch('/subscription', 'patch');
     Route::delete('/subscription', 'delete');

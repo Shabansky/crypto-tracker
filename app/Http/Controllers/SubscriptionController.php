@@ -13,6 +13,36 @@ use Illuminate\Validation\ValidationException;
 
 class SubscriptionController extends Controller
 {
+
+    /**
+     * List all subscription settings for a given email
+     */
+    public function get(Request $request)
+    {
+        $content = $request->getContent();
+
+        try {
+            if (!json_validate($content)) {
+                throw new InvalidArgumentException("Request body is not a JSON");
+            }
+
+            $request->validate([
+                'email' => 'required|email',
+            ]);
+
+            $content = json_decode($content);
+
+            $existingEntries = Subscription
+                ::select('email', 'timeframe', 'threshold')
+                ->where('email', $content->email)
+                ->get();
+
+            return new Response(json_encode($existingEntries->toArray()), 200);
+        } catch (InvalidArgumentException | ValidationException $e) {
+            return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
+        }
+    }
+
     /**
      * Create a new subscription
      */
@@ -108,7 +138,7 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Removes specified subscription. Deletes all related subscription settings.
+     * Remove specified subscription. Delete all related subscription settings.
      */
     public function delete(Request $request)
     {
