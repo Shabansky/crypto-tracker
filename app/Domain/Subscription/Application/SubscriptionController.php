@@ -64,8 +64,8 @@ class SubscriptionController extends Controller
 
             $request->validate([
                 'email' => 'required|email',
-                'threshold' => 'numeric|gte:0|decimal:0,2',
-                'timeframe' => 'numeric|in:' . implode(',', TimeframeHoursEnum::values()),
+                'threshold' => 'required|numeric|gte:0|decimal:0,2',
+                'timeframe' => 'required|numeric|in:' . implode(',', TimeframeHoursEnum::values()),
             ], [
                 'timeframe.in' => 'The selected timeframe is invalid. Please choose one of the following: ' .  implode(', ', TimeframeHoursEnum::values())
             ]);
@@ -84,7 +84,6 @@ class SubscriptionController extends Controller
         }
 
         $existingEntry = $existingEntry->first();
-        $existingEntry->threshold = $content->threshold;
 
         try {
             $existingEntry->save();

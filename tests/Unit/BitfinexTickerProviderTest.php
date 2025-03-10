@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Services\TickerProviders\BitfinexTickerProvider;
-use App\Services\TickerProviders\TickerResponseDto;
+use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
+use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
+use App\Domain\TickerProviders\Infrastructure\TickerResponseDto;
 use PHPUnit\Framework\TestCase;
-use App\Services\TickerProviders\TickerProviderApiException;
 
 class BitfinexTickerProviderTest extends TestCase
 {

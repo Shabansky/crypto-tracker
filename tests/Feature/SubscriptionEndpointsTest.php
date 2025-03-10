@@ -5,7 +5,7 @@ namespace Tests\Feature;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
-class EndpointsTest extends TestCase
+class SubscriptionEndpointsTest extends TestCase
 {
     use RefreshDatabase;
 
@@ -113,6 +113,14 @@ class EndpointsTest extends TestCase
 
     public function test_patch_success(): void
     {
+        //Initialize subscription as post is not an upsert
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 50.00,
+            'timeframe' => 1,
+        ]);
+
+
         /* With both threshold and timeframe defined */
         $response = $this->patchJson('api/subscription', [
             'email' => 'test@example.com',
@@ -122,6 +130,18 @@ class EndpointsTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertContent('Edit Existing Subscription');
+    }
+
+    public function test_patch_validations_fail()
+    {
+        /* Missing email parameter */
+        $response = $this->patchJson('api/subscription', [
+            'threshold' => 100.00,
+            'timeframe' => 1,
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertContent('Invalid request: The email field is required.');
 
         /* Only with timeframe defined */
         $response = $this->patchJson('api/subscription', [
@@ -129,40 +149,33 @@ class EndpointsTest extends TestCase
             'timeframe' => 1,
         ]);
 
-        $response->assertStatus(200);
-        $response->assertContent('Edit Existing Subscription');
-
-        /* Only with threshold defined */
+        /* Missing timeframe */
         $response = $this->patchJson('api/subscription', [
             'email' => 'test@example.com',
             'threshold' => 100.00,
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertContent('Edit Existing Subscription');
-
-        /* With neither threshold nor timeframe defined */
-        $response = $this->patchJson('api/subscription', [
-            'email' => 'test@example.com',
-        ]);
-
-        $response->assertStatus(200);
-        $response->assertContent('Edit Existing Subscription');
-    }
-
-    public function test_patch_validations_fail()
-    {
-        /* Missing email parameter */
-        $response = $this->postJson('api/subscription', [
-            'threshold' => 100.00,
-            'timeframe' => 1,
         ]);
 
         $response->assertStatus(400);
+        $response->assertContent('Invalid request: The timeframe field is required.');
+
+        /* Missing timeframe and threshold */
+        $response = $this->patchJson('api/subscription', [
+            'email' => 'test@example.com',
+        ]);
+
+        $response->assertStatus(400);
+        $response->assertContent('Invalid request: The threshold field is required. (and 1 more error)');
     }
 
     public function test_delete_success(): void
     {
+        //Initialize subscription
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 50.00,
+            'timeframe' => 1,
+        ]);
+
         $response = $this->deleteJson('api/subscription', [
             'email' => 'test@example.com',
         ]);
