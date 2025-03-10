@@ -129,7 +129,7 @@ class SubscriptionEndpointsTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertContent('Edit Existing Subscription');
+        $response->assertContent('Subscription updated successfully');
     }
 
     public function test_patch_validations_fail()
@@ -181,7 +181,7 @@ class SubscriptionEndpointsTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertContent('Delete Existing Subscription');
+        $response->assertContent('Subscription deleted successfully');
     }
 
     public function test_delete_validations_fail()
