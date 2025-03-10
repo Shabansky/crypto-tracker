@@ -9,8 +9,10 @@ use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderInterface;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
+use App\Mail\PriceChangeNotification;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 
 class SubscribersNotificationHandler
 {
@@ -24,7 +26,17 @@ class SubscribersNotificationHandler
 
         foreach (PriceDifferenceGenerator::generate($currentTickers) as $priceDifferenceDto) {
             $emailsToNotify = $this->getEmailsToNotifyByTimeframe($priceDifferenceDto);
+
+            if (empty($emailsToNotify)) {
+                continue;
+            }
+
             self::logPriceDifference($priceDifferenceDto);
+
+            self::logMailQueueInfo($priceDifferenceDto->timeframe, count($emailsToNotify));
+            foreach ($emailsToNotify as $email) {
+                Mail::to($email)->send(new PriceChangeNotification($priceDifferenceDto));
+            }
         }
     }
 
@@ -37,6 +49,16 @@ class SubscribersNotificationHandler
             $priceDifferenceDto->initialPrice,
             $priceDifferenceDto->getPriceDifferenceAbs(),
             $priceDifferenceDto->getPercentageDifference()
+        );
+        Log::notice($logMessage);
+    }
+
+    protected static function logMailQueueInfo(int $timeframe, int $emailsCount)
+    {
+        $logMessage = sprintf(
+            "Timeframe (hours): %s, Mails queued to send: %s",
+            $timeframe,
+            $emailsCount
         );
         Log::notice($logMessage);
     }
