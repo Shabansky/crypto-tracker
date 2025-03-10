@@ -9,10 +9,9 @@ use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderInterface;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
-use App\Mail\PriceChangeNotification;
+use App\Jobs\ProcessEmails;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class SubscribersNotificationHandler
 {
@@ -27,15 +26,15 @@ class SubscribersNotificationHandler
         foreach (PriceDifferenceGenerator::generate($currentTickers) as $priceDifferenceDto) {
             $emailsToNotify = $this->getEmailsToNotifyByTimeframe($priceDifferenceDto);
 
+            self::logPriceDifference($priceDifferenceDto);
+
             if (empty($emailsToNotify)) {
                 continue;
             }
 
-            self::logPriceDifference($priceDifferenceDto);
-
             self::logMailQueueInfo($priceDifferenceDto->timeframe, count($emailsToNotify));
             foreach ($emailsToNotify as $email) {
-                Mail::to($email)->send(new PriceChangeNotification($priceDifferenceDto));
+                ProcessEmails::dispatch($email, $priceDifferenceDto);
             }
         }
     }

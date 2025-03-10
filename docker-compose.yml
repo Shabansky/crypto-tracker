@@ -17,6 +17,16 @@ services:
       - ./:/var/www/html
       - ./docker-compose/php.ini:/usr/local/etc/php/php.ini
 
+  queue-worker:
+    build:
+      context: ./docker-compose/contexts/queue-worker
+    restart: always
+    command: php artisan queue:work
+    volumes:
+      - ./:/var/www/html/
+    depends_on:
+      - api
+
   mysql:
     image: mysql:8.0
     environment:

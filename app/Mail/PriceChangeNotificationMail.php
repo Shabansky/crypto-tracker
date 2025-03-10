@@ -4,14 +4,12 @@ namespace App\Mail;
 
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use Mockery\ReceivedMethodCalls;
 
-class PriceChangeNotification extends Mailable
+class PriceChangeNotificationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -32,7 +30,7 @@ class PriceChangeNotification extends Mailable
     {
         return new Envelope(
             subject: 'Price Change Notification',
-            from: 'test@mytracker.com',
+            from: env('MAIL_SENDER', ''),
         );
     }
 
