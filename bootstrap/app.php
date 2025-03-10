@@ -1,6 +1,7 @@
 <?php
 
 use App\Domain\Ticker\Application\Handlers\SubscribersNotificationHandler;
+use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,6 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withSchedule(function (Schedule $schedule) {
         $schedule->call(function () {
             $handler = new SubscribersNotificationHandler();
-            $handler->handle();
+            $handler->handle(new BitfinexTickerProvider());
         })->hourly();
     })->create();

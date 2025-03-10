@@ -6,18 +6,17 @@ use App\Domain\Ticker\Domain\Models\HourlyTicker;
 use App\Domain\Ticker\Domain\Repositories\HourlyTickerRepository;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
-use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
+use App\Domain\TickerProviders\Infrastructure\TickerProviderInterface;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
 
 class SubscribersNotificationHandler
 {
-    public function handle()
+    public function handle(TickerProviderInterface $provider)
     {
         //Try to get data from provider
         try {
-            $provider = new BitfinexTickerProvider();
             $response = $provider->get();
         } catch (ConnectionException | TickerProviderApiException $e) {
             Log::emergency(sprintf("Service unresponsive: %s", $e->getMessage()));
