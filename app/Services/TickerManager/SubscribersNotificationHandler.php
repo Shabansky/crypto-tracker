@@ -20,6 +20,7 @@ class SubscribersNotificationHandler
             $response = $provider->get();
         } catch (ConnectionException | TickerProviderApiException $e) {
             Log::emergency(sprintf("Service unresponsive: %s", $e->getMessage()));
+            return;
         }
 
         //Save to DB
