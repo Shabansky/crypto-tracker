@@ -2,7 +2,7 @@
 
 namespace App\Domain\Ticker\Infrastructure;
 
-use App\TimeframeHoursEnum;
+use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use Illuminate\Database\Eloquent\Collection;
 
 class PriceDifferenceGenerator

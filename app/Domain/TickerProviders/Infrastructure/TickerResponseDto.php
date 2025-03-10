@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\TickerProviders;
+namespace App\Domain\TickerProviders\Infrastructure;
 
 class TickerResponseDto
 {

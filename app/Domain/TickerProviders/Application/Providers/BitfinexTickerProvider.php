@@ -1,8 +1,11 @@
 <?php
 
-namespace App\Services\TickerProviders;
+namespace App\Domain\TickerProviders\Application\Providers;
 
 use Illuminate\Support\Facades\Http;
+use App\Domain\TickerProviders\Infrastructure\TickerProviderInterface;
+use App\Domain\TickerProviders\Infrastructure\TickerResponseDto;
+use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
 
 class BitfinexTickerProvider implements TickerProviderInterface
 {

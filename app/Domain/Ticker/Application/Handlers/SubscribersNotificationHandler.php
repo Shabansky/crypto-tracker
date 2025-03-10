@@ -6,8 +6,8 @@ use App\Domain\Ticker\Domain\Models\HourlyTicker;
 use App\Domain\Ticker\Domain\Repositories\HourlyTickerRepository;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
-use App\Services\TickerProviders\BitfinexTickerProvider;
-use App\Services\TickerProviders\TickerProviderApiException;
+use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
+use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
 
