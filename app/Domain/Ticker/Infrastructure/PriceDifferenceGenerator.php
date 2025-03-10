@@ -7,6 +7,14 @@ use Illuminate\Database\Eloquent\Collection;
 
 class PriceDifferenceGenerator
 {
+    /**
+     * Attempts to generate PriceDifferenceDto objects for each
+     * timeframe as defined in TimeframeHoursEnum. Will ignore
+     * cases where the number of collection tickers is lower than
+     * the timeframe itself.
+     * 
+     * @param Collection<HourlyTicker> $collectionTickers
+     */
     public static function generate(Collection $collectionTickers)
     {
         foreach (TimeframeHoursEnum::values() as $timeframe) {
