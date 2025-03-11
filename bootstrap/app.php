@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Ticker\Application\Handlers\ClearTickersHandler;
 use App\Domain\Ticker\Application\Handlers\SubscribersNotificationHandler;
 use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
 use Illuminate\Console\Scheduling\Schedule;
@@ -25,5 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->call(function () {
             new SubscribersNotificationHandler()
                 ->handle(new BitfinexTickerProvider());
+            new ClearTickersHandler()
+                ->handle();
         })->hourly();
     })->create();

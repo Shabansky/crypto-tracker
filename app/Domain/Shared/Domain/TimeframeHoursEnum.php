@@ -14,4 +14,9 @@ enum TimeframeHoursEnum: int
     {
         return array_column(self::cases(), 'value');
     }
+
+    public static function greatest(): int
+    {
+        return max(self::values());
+    }
 }

@@ -46,6 +46,18 @@ The system collects information in three log channels which print the data in th
 - Emails : As the current mail implementation doesn't work too well (no SMTP server + `sendmail` doesn't seem to be reaching its recepients), mails as well as queue information about number sent is stored in `/storage/logs/emails.log`
 - General Errors : Any unhandled exceptions find their way to `/storage/logs/laravel.log`. Hopefully this one doesn't fill up too much.
 
+
+## Ticker Retention
+
+Tickers are kept in the `btc_tracker.hourly_tickers` table. As it tends to fill up quickly and a lot of the information it contains becomes invalid after a certain point (24 hours currently), it doesn't make much sense to keep it around. Thus on every hour as the system
+checks for a new ticker from the alloted provider, it also attempts to clear old data.
+
+The retention period (after which hour) to clear is defined in `.env` `TICKER_RETENTION_HOURS`.
+
+**IMPORTANT**
+The ticker retention defined in `.env` must not be lower than 24 hours (the current maximum timeframe). Otherwise the cleaner would be prone to clearing perfectly useable data. An emergency log will be issued in `price_checker.log` if that occurs.
+
+
 ## Caveats to the current version
 
 While the system does generate mails, it currently does so internally. All mails are saved in the logs (specify which). Didn't have much luck implementing a full-fledged SMTP Server configuration.
