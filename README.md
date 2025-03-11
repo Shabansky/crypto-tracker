@@ -12,11 +12,37 @@ of `docker compose`.
 2. Install dependencies
 `docker compose exec api composer install`
 
-## Notable Features
+## System Operation
 
 ### Subscription API
 
-The system supports an API for viewing and modifiying subscriptions. 
-
+The system supports an API for viewing and modifiying subscriptions. It allows for the current actions:
+- List subscriptions by email
+- Add new subscriptions. A single email can have multiple subscriptions (called subscription settings). Each one can use a different time frame (more on this below). This allows for a granular control of notifications.
+- Edit existing subscription setting
+- Delete subscription settings and subscriptions.
 
 An OpenAPI Documentation of the project can be found at `./openapi.yaml`
+
+### Price Tracker
+
+The other side of the project is responsible for pulling Bitcoin ticker data from 3rd party providers. Currently only Bitfinex is supported but the system would allow (after some minor adjustments) for the introduction of other providers as well.
+
+Price checking is done in what are called **time frames**. A time frame describes the number of hours from a past moment to the present in which a price check is done. It is used as a slice in which to check for price deviations. Currently the system time frames of 1, 6 and 24 hours. Each *subscription setting* has a *time frame*.
+
+Finally **thresholds** are percent changes defined for each subscriber. If the price of Bitcoin during a given *time frame* changes by a percentage greater than the threshold, the subscriber receives a notification. Each *subscription setting* has a *time frame*.
+
+
+## Logs
+
+The system collects information in three log channels which print the data in three log files respectively:
+
+- Price Checker : Any data relevant to the Price Checker scheduler including emergencies from service outages. Data written in `/storage/logs/price_checker.log`
+- Emails : As the current mail implementation doesn't work too well (no SMTP server + `sendmail` doesn't seem to be reaching its recepients), mails as well as queue information about number sent is stored in `/storage/logs/emails.log`
+- General Errors : Any unhandled exceptions find their way to `/storage/logs/laravel.log`. Hopefully this one doesn't fill up too much.
+
+## Caveats to the current version
+
+While the system does generate mails, it currently does so internally. All mails are saved in the logs (specify which). Didn't have much luck implementing a full-fledged SMTP Server configuration.
+
+

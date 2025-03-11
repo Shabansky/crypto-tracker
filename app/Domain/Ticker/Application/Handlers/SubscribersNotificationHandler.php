@@ -49,7 +49,7 @@ class SubscribersNotificationHandler
             $priceDifferenceDto->getPriceDifferenceAbs(),
             $priceDifferenceDto->getPercentageDifference()
         );
-        Log::notice($logMessage);
+        Log::channel('price_checker')->notice($logMessage);
     }
 
     protected static function logMailQueueInfo(int $timeframe, int $emailsCount)
@@ -59,7 +59,7 @@ class SubscribersNotificationHandler
             $timeframe,
             $emailsCount
         );
-        Log::notice($logMessage);
+        Log::channel('emails')->notice($logMessage);
     }
 
     protected function getEmailsToNotifyByTimeframe(
@@ -78,7 +78,7 @@ class SubscribersNotificationHandler
         try {
             $response = $provider->get();
         } catch (ConnectionException | TickerProviderApiException $e) {
-            Log::emergency(sprintf("Service unresponsive: %s", $e->getMessage()));
+            Log::channel('price_checker')->emergency(sprintf("Service unresponsive: %s", $e->getMessage()));
             return;
         }
 
