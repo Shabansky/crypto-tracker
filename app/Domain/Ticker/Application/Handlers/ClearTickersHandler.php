@@ -6,16 +6,11 @@ use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use App\Domain\Ticker\Domain\Models\HourlyTicker;
 use App\Infrastructure\Notifications\ServiceOutageNotifier;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
-use LogicException;
 
 class ClearTickersHandler
 {
-    public function handle()
+    public function handle(int $retentionHours, int $maxTimeframe)
     {
-        $maxTimeframe = TimeframeHoursEnum::greatest();
-        $retentionHours = env('TICKER_RETENTION_HOURS', $maxTimeframe * 2);
-
         //Disallow the below case as this will corrupt actively used data
         if ($retentionHours < $maxTimeframe) {
             ServiceOutageNotifier::run(

@@ -1,5 +1,6 @@
 <?php
 
+use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use App\Domain\Ticker\Application\Handlers\ClearTickersHandler;
 use App\Domain\Ticker\Application\Handlers\SubscribersNotificationHandler;
 use App\Domain\TickerProviders\Application\Providers\BitfinexTickerProvider;
@@ -26,7 +27,10 @@ return Application::configure(basePath: dirname(__DIR__))
         $schedule->call(function () {
             new SubscribersNotificationHandler()
                 ->handle(new BitfinexTickerProvider());
+
+            $maxTimeframe = TimeframeHoursEnum::greatest();
+            $retentionHours = env('TICKER_RETENTION_HOURS', $maxTimeframe * 2);
             new ClearTickersHandler()
-                ->handle();
+                ->handle($retentionHours, $maxTimeframe);
         })->hourly();
     })->create();
