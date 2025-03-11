@@ -46,6 +46,12 @@ The system collects information in three log channels which print the data in th
 - Emails : As the current mail implementation doesn't work too well (no SMTP server + `sendmail` doesn't seem to be reaching its recepients), mails as well as queue information about number sent is stored in `/storage/logs/emails.log`
 - General Errors : Any unhandled exceptions find their way to `/storage/logs/laravel.log`. Hopefully this one doesn't fill up too much.
 
+## Emails
+
+Currently two types of emails are enerated (but not sent) for subscribers.
+
+- Price Change Notification - whenever the threshold for a given timeframe exceeds a subscriber's setting, a detailed mail with info on price, change etc. is sent.
+- Service Outage Notification - whenever the system experiences an emergency, an email is sent to all subscribers.
 
 ## Ticker Retention
 
@@ -61,5 +67,14 @@ The ticker retention defined in `.env` must not be lower than 24 hours (the curr
 ## Caveats to the current version
 
 While the system does generate mails, it currently does so internally. All mails are saved in the logs (specify which). Didn't have much luck implementing a full-fledged SMTP Server configuration.
+
+## Future Features
+
+In case this project survives beyond the interview (why not?), there are some ideas for improvement:
+
+- Add support for ticker types other than Bitcoin's
+- Additional providers. This can provide redundancy against provider outage plus aggregate to an average if data diverges
+- Add API authentication using Bearer tokens. Was planned to be in initial product but contstrained for time.
+- Notify clients of service outage end. Perhaps another scheduler with more frequent calls (1-5 mins) to check for provider state. A heartbeat of sorts that works up until service returns OK.
 
 

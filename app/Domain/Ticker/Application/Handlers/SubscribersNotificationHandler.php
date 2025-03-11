@@ -9,7 +9,7 @@ use App\Domain\Ticker\Infrastructure\PriceDifferenceGenerator;
 use App\Domain\Ticker\Infrastructure\PriceDifferenceDto;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderInterface;
 use App\Domain\TickerProviders\Infrastructure\TickerProviderApiException;
-use App\Jobs\ProcessEmails;
+use App\Jobs\ProcessPriceEmails;
 use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +34,7 @@ class SubscribersNotificationHandler
 
             self::logMailQueueInfo($priceDifferenceDto->timeframe, count($emailsToNotify));
             foreach ($emailsToNotify as $email) {
-                ProcessEmails::dispatch($email, $priceDifferenceDto);
+                ProcessPriceEmails::dispatch($email, $priceDifferenceDto);
             }
         }
     }

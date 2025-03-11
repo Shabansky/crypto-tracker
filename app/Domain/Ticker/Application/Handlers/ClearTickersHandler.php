@@ -4,6 +4,7 @@ namespace App\Domain\Ticker\Application\Handlers;
 
 use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use App\Domain\Ticker\Domain\Models\HourlyTicker;
+use App\Infrastructure\Notifications\ServiceOutageNotifier;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Log;
 use LogicException;
@@ -17,14 +18,15 @@ class ClearTickersHandler
 
         //Disallow the below case as this will corrupt actively used data
         if ($retentionHours < $maxTimeframe) {
-            Log::channel('price_checker')
-                ->emergency(
-                    sprintf(
-                        "Service unresponsive: Ticker retention of %s is less than the maximum timeframe of %s.",
-                        $retentionHours,
-                        $maxTimeframe
-                    )
-                );
+            ServiceOutageNotifier::run(
+                'price_checker',
+                sprintf(
+                    "Service unresponsive: Ticker retention of %s is less than the maximum timeframe of %s.",
+                    $retentionHours,
+                    $maxTimeframe
+                )
+            );
+            return;
         }
 
         $currentTickersQuery =  HourlyTicker::select('id')

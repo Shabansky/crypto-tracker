@@ -8,7 +8,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Mail;
 
-class ProcessEmails implements ShouldQueue
+class ProcessPriceEmails implements ShouldQueue
 {
     use Queueable;
 
@@ -25,6 +25,7 @@ class ProcessEmails implements ShouldQueue
      */
     public function handle(): void
     {
+        var_dump('ttttt');
         $email = new PriceChangeNotificationMail($this->priceDifferenceDto);
         Mail::to($this->email)->send($email);
     }
