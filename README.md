@@ -4,6 +4,7 @@
 - PHP 8.4.4
 - Laravel 12.1.1
 - MySql 8.0.41
+- nginx 1.27.4
 
 ## Installation
 
@@ -72,9 +73,13 @@ While the system does generate mails, it currently does so internally. All mails
 
 In case this project survives beyond the interview (why not?), there are some ideas for improvement:
 
+- Update system to actually send emails :)
 - Add support for ticker types other than Bitcoin's
 - Additional providers. This can provide redundancy against provider outage plus aggregate to an average if data diverges
 - Add API authentication using Bearer tokens. Was planned to be in initial product but contstrained for time.
 - Notify clients of service outage end. Perhaps another scheduler with more frequent calls (1-5 mins) to check for provider state. A heartbeat of sorts that works up until service returns OK.
+- Integrate Vault or similar for credentials
+- Logs to ElasticSearch or similar. Optimize logs for respective system.
+- On service outage restoration, implement a mechanism that refreshes the ticker data. As a service outage of one hour will skip an hour's ticker and provide wrong data.Perhaps use the Tickers History API endpoint.
 
 
