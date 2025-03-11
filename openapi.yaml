@@ -4,28 +4,25 @@ info:
   description: 'Allows for listing and control of different email subscriptions'
   version: 1.0.0
 paths:
-  /subscription:
+  '/subscription/{email}':
     get:
       summary: 'List all subscription settings for a given email'
       description: 'List all subscription settings for a given email'
-      operationId: 4e9987c0db38b0c8150a611a656bac70
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - email
-              properties:
-                email:
-                  description: 'The email to search subscriptions by'
-                  type: string
-              type: object
+      operationId: 9879ac5c982b4cfae425114e35f82411
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'The email to search subscriptions by'
+          required: true
+          schema:
+            type: string
       responses:
         '200':
           description: OK
         '400':
           description: 'Validation errors'
+  /subscription:
     post:
       summary: 'Create a new subscription'
       description: 'Add a new subscription'

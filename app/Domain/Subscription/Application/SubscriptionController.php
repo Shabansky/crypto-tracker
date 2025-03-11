@@ -24,24 +24,20 @@ class SubscriptionController extends Controller
     /**
      * List all subscription settings for a given email
      */
-    #[OA\Get(path: '/subscription', description: 'List all subscription settings for a given email')]
-    #[OA\RequestBody(
+    #[OA\Get(path: '/subscription/{email}', description: 'List all subscription settings for a given email')]
+    #[OA\Parameter(
+        name: 'email',
+        in: 'path',
         required: true,
-        content: new OA\JsonContent(
-            required: ['email'],
-            properties: [
-                new OA\Property(
-                    property: 'email',
-                    type: 'string',
-                    description: 'The email to search subscriptions by'
-                )
-            ]
-        )
+        schema: new OA\Schema(type: 'string'),
+        description: 'The email to search subscriptions by'
     )]
+
     #[OA\Response(response: Response::HTTP_OK, description: 'OK')]
     #[OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'Validation errors')]
-    public function list(Request $request)
+    public function list(string $email)
     {
+        $request = new Request(['email' => $email]);
         return new listSubscriptionHandler()->run($request);
     }
 

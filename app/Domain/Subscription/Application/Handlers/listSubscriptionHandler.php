@@ -10,7 +10,7 @@ class listSubscriptionHandler extends Handler
     protected function validate()
     {
         $this->request->validate([
-            'email' => 'required|email',
+            'email' => 'required|email'
         ]);
     }
 
@@ -18,7 +18,7 @@ class listSubscriptionHandler extends Handler
     {
         $existingEntries = Subscription
             ::select('email', 'timeframe', 'threshold')
-            ->where('email', $this->requestContent->email)
+            ->where('email', $this->request->query('email'))
             ->get();
 
         return new Response(json_encode($existingEntries->toArray()), 200);

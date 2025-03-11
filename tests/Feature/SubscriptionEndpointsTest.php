@@ -10,6 +10,19 @@ class SubscriptionEndpointsTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_list_success(): void
+    {
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 100.00,
+            'timeframe' => 1,
+        ]);
+
+        $response = $this->get('api/subscription/test@example.com');
+
+        $response->assertStatus(200);
+    }
+
     public function test_post_success(): void
     {
         $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();

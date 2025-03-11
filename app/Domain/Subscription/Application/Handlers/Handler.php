@@ -18,16 +18,12 @@ abstract class Handler
     public function run(Request $request): Response
     {
         $this->request = $request;
+        $this->requestContent = new stdClass;
 
         $content = trim($this->request->getContent());
 
         try {
-            if (!json_validate($content)) {
-                throw new InvalidArgumentException("Request body is not a JSON");
-            }
-
-            $this->requestContent = json_decode($content);
-
+            $this->validateBodyAsJson($content);
             $this->validate();
         } catch (InvalidArgumentException | ValidationException $e) {
             return new Response(sprintf("Invalid request: %s", $e->getMessage()), 400);
@@ -41,6 +37,17 @@ abstract class Handler
             //TODO: Log this
             var_dump($e->getMessage());
             return new Response('General error', 500);
+        }
+    }
+
+    protected function validateBodyAsJson(string $body)
+    {
+        if (!empty($body)) {
+            if (!json_validate($body)) {
+                throw new InvalidArgumentException("Request body is not a JSON");
+            }
+
+            $this->requestContent = json_decode($body);
         }
     }
 
