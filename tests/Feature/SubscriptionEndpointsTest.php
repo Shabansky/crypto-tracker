@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\Domain\Subscription\Domain\Subscription;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -11,11 +12,17 @@ class SubscriptionEndpointsTest extends TestCase
 
     public function test_post_success(): void
     {
+        $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();
+
         $response = $this->postJson('api/subscription', [
             'email' => 'test@example.com',
             'threshold' => 100.00,
             'timeframe' => 1,
         ]);
+
+        $subscriptionCountEnd = Subscription::where('email', 'test@example.com')->count();
+
+        $this->assertGreaterThan($subscriptionCountInit, $subscriptionCountEnd);
 
         $response->assertStatus(200);
         $response->assertContent('Subscription added successfully');
@@ -176,12 +183,50 @@ class SubscriptionEndpointsTest extends TestCase
             'timeframe' => 1,
         ]);
 
+        $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();
+
         $response = $this->deleteJson('api/subscription', [
             'email' => 'test@example.com',
         ]);
 
+        $subscriptionCountEnd = Subscription::where('email', 'test@example.com')->count();
+        $this->assertLessThan($subscriptionCountInit, $subscriptionCountEnd);
+
         $response->assertStatus(200);
         $response->assertContent('Subscription deleted successfully');
+    }
+
+    public function test_delete_subscription_setting()
+    {
+        //Initialize subscription settings for each timeframe
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 50.00,
+            'timeframe' => 1,
+        ]);
+
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 50.00,
+            'timeframe' => 6,
+        ]);
+
+        $this->postJson('api/subscription', [
+            'email' => 'test@example.com',
+            'threshold' => 50.00,
+            'timeframe' => 24,
+        ]);
+
+        $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();
+
+        $response = $this->deleteJson('api/subscription', [
+            'email' => 'test@example.com',
+            'timeframe' => 1,
+        ]);
+
+        $subscriptionCountEnd = Subscription::where('email', 'test@example.com')->count();
+
+        $this->assertEquals($subscriptionCountInit - 1, $subscriptionCountEnd);
     }
 
     public function test_delete_validations_fail()
