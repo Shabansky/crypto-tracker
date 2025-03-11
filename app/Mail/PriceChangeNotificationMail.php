@@ -46,7 +46,10 @@ class PriceChangeNotificationMail extends Mailable
                 'latestPrice' => $this->priceDifferenceDto->latestPrice,
                 'initialPrice' => $this->priceDifferenceDto->initialPrice,
                 'priceDifference' => $this->priceDifferenceDto->getPriceDifference(),
-                'percentageDifference' => $this->priceDifferenceDto->getPercentageDifference(),
+                'percentageDifference' => number_format(
+                    $this->priceDifferenceDto->getPercentageDifference(),
+                    4
+                ),
             ],
         );
     }
