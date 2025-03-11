@@ -198,9 +198,7 @@ class SubscriptionEndpointsTest extends TestCase
 
         $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();
 
-        $response = $this->deleteJson('api/subscription', [
-            'email' => 'test@example.com',
-        ]);
+        $response = $this->delete('api/subscription/test@example.com');
 
         $subscriptionCountEnd = Subscription::where('email', 'test@example.com')->count();
         $this->assertLessThan($subscriptionCountInit, $subscriptionCountEnd);
@@ -232,13 +230,10 @@ class SubscriptionEndpointsTest extends TestCase
 
         $subscriptionCountInit = Subscription::where('email', 'test@example.com')->count();
 
-        $response = $this->deleteJson('api/subscription', [
-            'email' => 'test@example.com',
-            'timeframe' => 1,
-        ]);
+        $this->delete('api/subscription/test@example.com/1');
 
         $subscriptionCountEnd = Subscription::where('email', 'test@example.com')->count();
-
+        var_dump($subscriptionCountInit, $subscriptionCountEnd);
         $this->assertEquals($subscriptionCountInit - 1, $subscriptionCountEnd);
     }
 

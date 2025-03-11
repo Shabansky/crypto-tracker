@@ -118,34 +118,57 @@ class SubscriptionController extends Controller
     }
 
     /**
-     * Remove specified subscription. Delete all related subscription settings.
+     * Delete specified subscription setting.
      */
-    #[OA\Delete(path: '/subscription', description: 'Deletes either a subscription or a subscription setting if a timeframe is defined')]
-    #[OA\RequestBody(
+    #[OA\Delete(path: '/subscription/{email}/{timeframe}', description: 'Deletes either a subscription or a subscription setting if a timeframe is defined')]
+    #[OA\Parameter(
+        name: 'email',
+        in: 'path',
         required: true,
-        content: new OA\JsonContent(
-            required: ['email',],
-            properties: [
-                new OA\Property(
-                    property: 'email',
-                    type: 'string',
-                    description: 'The email to search subscriptions by'
-                ),
-                new OA\Property(
-                    property: 'timeframe',
-                    type: 'integer',
-                    enum: TimeframeHoursEnum::VALUES,
-                    description: 'The timeframe in hours at which to check for price deviations. If defined, delete a subscription setting.'
-                )
-            ]
-        )
+        schema: new OA\Schema(type: 'string'),
+        description: 'The email to search subscriptions by'
     )]
+    #[OA\Parameter(
+        name: 'timeframe',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(
+            type: 'integer',
+            enum: [1, 6, 24]
+        ),
+        description: 'The timeframe in hours at which to check for price deviations. If defined, delete a subscription setting.'
+    )]
+
     #[OA\Response(response: Response::HTTP_OK, description: 'OK')]
     #[OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'Validation errors')]
     #[OA\Response(response: Response::HTTP_CONFLICT, description: 'Subscriber to be deleted does not exist')]
     #[OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Service unable to process request')]
-    public function delete(Request $request)
+    public function deleteSetting(string $email, ?int $timeframe = null)
     {
+        $request = new Request(['email' => $email, 'timeframe' => $timeframe]);
+        return new deleteSubscriptionHandler()->run($request);
+    }
+
+
+    /**
+     * Delete all subscriptions.
+     */
+    #[OA\Delete(path: '/subscription/{email}', description: 'Deletes either a subscription or a subscription setting if a timeframe is defined')]
+    #[OA\Parameter(
+        name: 'email',
+        in: 'path',
+        required: true,
+        schema: new OA\Schema(type: 'string'),
+        description: 'The email to search subscriptions by'
+    )]
+
+    #[OA\Response(response: Response::HTTP_OK, description: 'OK')]
+    #[OA\Response(response: Response::HTTP_BAD_REQUEST, description: 'Validation errors')]
+    #[OA\Response(response: Response::HTTP_CONFLICT, description: 'Subscriber to be deleted does not exist')]
+    #[OA\Response(response: Response::HTTP_INTERNAL_SERVER_ERROR, description: 'Service unable to process request')]
+    public function deleteAll(string $email)
+    {
+        $request = new Request(['email' => $email, 'timeframe' => null]);
         return new deleteSubscriptionHandler()->run($request);
     }
 }

@@ -7,5 +7,6 @@ Route::controller(SubscriptionController::class)->group(function () {
     Route::get('/subscription/{email}', 'list');
     Route::post('/subscription', 'post');
     Route::patch('/subscription', 'patch');
-    Route::delete('/subscription', 'delete');
+    Route::delete('/subscription/{email}', 'deleteAll');
+    Route::delete('/subscription/{email}/{timeframe}', 'deleteSetting');
 });

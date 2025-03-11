@@ -11,15 +11,20 @@ class deleteSubscriptionHandler extends Handler
 {
     protected function validate()
     {
-        $this->request->validate([
-            'email' => 'required|email',
-            'timeframe' => 'numeric|in:' . implode(',', TimeframeHoursEnum::values()),
-        ]);
+        $rulesToValidate = [
+            'email' => 'required|email'
+        ];
+
+        if ($this->request->query('timeframe') !== null) {
+            $rulesToValidate['timeframe'] = 'numeric|in:' . implode(',', TimeframeHoursEnum::values());
+        }
+
+        $this->request->validate($rulesToValidate);
     }
 
     protected function process(): Response
     {
-        if (isset($this->requestContent->timeframe)) {
+        if ($this->request->query('timeframe') !== null) {
             return $this->deleteSubscriptionSetting();
         }
 
@@ -29,8 +34,8 @@ class deleteSubscriptionHandler extends Handler
     protected function deleteSubscriptionSetting(): Response
     {
         $existingEntry = Subscription
-            ::where('email', $this->requestContent->email)
-            ->where('timeframe', $this->requestContent->timeframe);
+            ::where('email', $this->request->query('email'))
+            ->where('timeframe', $this->request->query('timeframe'));
 
         if (!$existingEntry->count()) {
             throw new InvalidArgumentException('Subscription setting does not exist. Cannot delete.');
@@ -44,7 +49,7 @@ class deleteSubscriptionHandler extends Handler
     protected function deleteSubscription(): Response
     {
         $existingEntries = Subscription
-            ::where('email', $this->requestContent->email);
+            ::where('email', $this->request->query('email'));
 
         if (!$existingEntries->count()) {
             throw new InvalidArgumentException('Subscription does not exist. Cannot delete.');

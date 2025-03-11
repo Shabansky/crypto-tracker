@@ -22,6 +22,27 @@ paths:
           description: OK
         '400':
           description: 'Validation errors'
+    delete:
+      summary: 'Delete all subscriptions.'
+      description: 'Deletes either a subscription or a subscription setting if a timeframe is defined'
+      operationId: 6709d0c48603a0203fae32732c74dd4a
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'The email to search subscriptions by'
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+        '409':
+          description: 'Subscriber to be deleted does not exist'
+        '500':
+          description: 'Service unable to process request'
   /subscription:
     post:
       summary: 'Create a new subscription'
@@ -59,35 +80,6 @@ paths:
           description: 'Subscriber to be created exists'
         '500':
           description: 'Service unable to process request'
-    delete:
-      summary: 'Remove specified subscription. Delete all related subscription settings.'
-      description: 'Deletes either a subscription or a subscription setting if a timeframe is defined'
-      operationId: f7ae165c98632167d7058eec8b59c789
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              required:
-                - email
-              properties:
-                email:
-                  description: 'The email to search subscriptions by'
-                  type: string
-                timeframe:
-                  description: 'The timeframe in hours at which to check for price deviations. If defined, delete a subscription setting.'
-                  type: integer
-                  enum: [1, 6, 24]
-              type: object
-      responses:
-        '200':
-          description: OK
-        '400':
-          description: 'Validation errors'
-        '409':
-          description: 'Subscriber to be deleted does not exist'
-        '500':
-          description: 'Service unable to process request'
     patch:
       summary: 'Update current subscription. Overwrite currently existing subscription settings.'
       description: 'Update a subscriber setting'
@@ -122,5 +114,38 @@ paths:
           description: 'Validation errors'
         '409':
           description: 'Subscriber to be updated does not exist'
+        '500':
+          description: 'Service unable to process request'
+  '/subscription/{email}/{timeframe}':
+    delete:
+      summary: 'Delete specified subscription setting.'
+      description: 'Deletes either a subscription or a subscription setting if a timeframe is defined'
+      operationId: 2b18467c41d8686ebe16a5cc0ec4852e
+      parameters:
+        -
+          name: email
+          in: path
+          description: 'The email to search subscriptions by'
+          required: true
+          schema:
+            type: string
+        -
+          name: timeframe
+          in: path
+          description: 'The timeframe in hours at which to check for price deviations. If defined, delete a subscription setting.'
+          required: true
+          schema:
+            type: integer
+            enum:
+              - 1
+              - 6
+              - 24
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: 'Validation errors'
+        '409':
+          description: 'Subscriber to be deleted does not exist'
         '500':
           description: 'Service unable to process request'
