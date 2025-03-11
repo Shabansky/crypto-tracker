@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\HourlyTicker;
-use App\Services\TickerProviders\TickerResponseDto;
+use App\Domain\Ticker\Domain\Models\HourlyTicker;
+use App\Domain\TickerProviders\Infrastructure\TickerResponseDto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
  */
 class HourlyTickerFactory extends Factory
 {
+    protected $model = HourlyTicker::class;
     /**
      * Define the model's default state.
      *
@@ -19,12 +20,23 @@ class HourlyTickerFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'price' => $this->faker->randomFloat(2, 10000, 50000),
+            'time' => new \DateTime(),
         ];
+    }
+
+    public static function makeFromAttributes(float $price, \DateTime $time)
+    {
+        $factory = new static();
+
+        return $factory->create([
+            'price' => $price,
+            'time' => $time
+        ]);
     }
 
     public static function fromProviderDto(TickerResponseDto $dto)
     {
-        return new HourlyTicker($dto->price, $dto->time);
+        return self::makeFromAttributes($dto->price, $dto->time);
     }
 }

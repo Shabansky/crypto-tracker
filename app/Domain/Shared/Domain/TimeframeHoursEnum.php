@@ -19,4 +19,14 @@ enum TimeframeHoursEnum: int
     {
         return max(self::values());
     }
+
+    public static function least(): int
+    {
+        return min(self::values());
+    }
+
+    public static function count(): int
+    {
+        return count(self::values());
+    }
 }
