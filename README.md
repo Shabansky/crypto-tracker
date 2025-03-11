@@ -1,5 +1,10 @@
 # Bitcoin Tracker
 
+## Tech Stack
+- PHP 8.4.4
+- Laravel 12.1.1
+- MySql 8.0.41
+
 ## Installation
 
 For the below commands, use `docker compose` for newer Docker versions
