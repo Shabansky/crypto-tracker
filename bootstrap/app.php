@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withSchedule(function (Schedule $schedule) {
         $schedule->call(function () {
-            $handler = new SubscribersNotificationHandler();
-            $handler->handle(new BitfinexTickerProvider());
+            new SubscribersNotificationHandler()
+                ->handle(new BitfinexTickerProvider());
         })->hourly();
     })->create();
