@@ -77,7 +77,7 @@ class SubscribersNotificationHandler
         //Try to get data from provider
         try {
             $response = $provider->get();
-        } catch (ConnectionException | TickerProviderApiException $e) {
+        } catch (TickerProviderApiException $e) {
             Log::channel('price_checker')->emergency(sprintf("Service unresponsive: %s", $e->getMessage()));
             return;
         }

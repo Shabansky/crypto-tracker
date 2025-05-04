@@ -61,6 +61,7 @@ abstract class Handler
     /**
      * @throws QueryException
      * @throws PDOException
+     * @throws InvalidArgumentException
      */
     protected abstract function process(): Response;
 }

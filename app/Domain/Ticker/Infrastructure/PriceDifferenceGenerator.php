@@ -4,6 +4,7 @@ namespace App\Domain\Ticker\Infrastructure;
 
 use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use Illuminate\Database\Eloquent\Collection;
+use App\Domain\Ticker\Domain\Models\HourlyTicker;
 
 class PriceDifferenceGenerator
 {
@@ -25,13 +26,15 @@ class PriceDifferenceGenerator
 
             $timeFramedTickers = $collectionTickers->slice(0, $timeframe + 1);
 
-            $latestPrice = $timeFramedTickers->first()->price;
-            $initialPrice = $timeFramedTickers->last()->price;
+            /** @var HourlyTicker $latestTicker */
+            $latestTicker = $timeFramedTickers->first();
+            /** @var HourlyTicker $initialTicker */
+            $initialTicker = $timeFramedTickers->last();
 
             yield new PriceDifferenceDto(
                 $timeframe,
-                $latestPrice,
-                $initialPrice
+                $latestTicker->price,
+                $initialTicker->price,
             );
         }
     }

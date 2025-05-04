@@ -30,7 +30,7 @@ class PriceChangeNotificationMail extends Mailable
     {
         return new Envelope(
             subject: 'Price Change Notification',
-            from: env('MAIL_SENDER', ''),
+            from: config('MAIL_SENDER', ''),
         );
     }
 

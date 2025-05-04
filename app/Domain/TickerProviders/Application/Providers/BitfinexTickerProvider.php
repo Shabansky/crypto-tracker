@@ -25,9 +25,9 @@ class BitfinexTickerProvider implements TickerProviderInterface
     public function get(): ?TickerResponseDto
     {
         try {
-            $tempResponse = $this->getTickerData();
+            $response = $this->getTickerData();
 
-            return $this->deserialize($tempResponse);
+            return $this->deserialize($response);
         } catch (TickerProviderApiException $e) {
             throw $e;
         }

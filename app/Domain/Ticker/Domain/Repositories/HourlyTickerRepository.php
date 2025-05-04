@@ -10,7 +10,7 @@ class HourlyTickerRepository
      * Get the latest tickers with a non-null time, limited to a specified number.
      *
      * @param  int  $limit
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return \Illuminate\Database\Eloquent\Collection<HourlyTicker>
      */
     public static function getLatestTickersPrices(int $limit = 25)
     {

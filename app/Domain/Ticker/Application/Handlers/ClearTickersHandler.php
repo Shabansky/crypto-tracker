@@ -2,7 +2,6 @@
 
 namespace App\Domain\Ticker\Application\Handlers;
 
-use App\Domain\Shared\Domain\TimeframeHoursEnum;
 use App\Domain\Ticker\Domain\Models\HourlyTicker;
 use App\Infrastructure\Notifications\ServiceOutageNotifier;
 use Illuminate\Database\Eloquent\Collection;
@@ -37,8 +36,10 @@ class ClearTickersHandler
          */
         $currentTickers = $currentTickersQuery->get();
 
-        $currentTickers->slice($retentionHours)->each(function (HourlyTicker $ticker) {
-            $ticker->delete();
+        $currentTickers->slice($retentionHours)->each(function ($ticker) {
+            if ($ticker instanceof HourlyTicker) {
+                $ticker->delete();
+            }
         });
     }
 }

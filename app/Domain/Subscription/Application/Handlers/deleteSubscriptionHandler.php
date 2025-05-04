@@ -41,7 +41,7 @@ class deleteSubscriptionHandler extends Handler
             throw new InvalidArgumentException('Subscription setting does not exist. Cannot delete.');
         }
 
-        $existingEntry->get()->first()->delete();
+        $existingEntry->first()->delete();
 
         return new Response('Subscription setting deleted successfully', 200);
     }

@@ -27,7 +27,7 @@ class ServiceOutageMail extends Mailable
     {
         return new Envelope(
             subject: 'Service Outage Mail',
-            from: env('MAIL_SENDER', ''),
+            from: config('MAIL_SENDER', ''),
         );
     }
 
